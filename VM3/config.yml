@@ -1,0 +1,58 @@
+# RAPPEL: eth0 est à vagrant, ne pas y toucher
+
+- hosts: localhost
+  remote_user: root
+  tasks:
+
+# Configurations Réseaux
+# suppression de connexion “Wired connexion 1”
+  - shell: nmcli connection del "Wired connection 1"
+    ignore_errors: true
+# suppression de connexion “Wired connexion 2”
+  - shell: nmcli connection del "Wired connection 2"
+    ignore_errors: true
+
+# suppression route par défaut (de vagrant)
+  - shell: ip route del default
+    ignore_errors: true # permet à ansible de continuer même en cas d'erreur
+
+  - name: Configuration de VM3/eth1 (LAN2)
+    nmcli:
+      type: ethernet
+      conn_name: eth1 via ansible
+      ifname: eth1
+      state: present
+      autoconnect: true
+      ip4: 172.16.2.163/28
+
+  - name: Configuration de VM3/eth2 (LAN4)
+    nmcli:
+      type: ethernet
+      conn_name: eth2 via ansible
+      ifname: eth2
+      state: present
+      autoconnect: true
+      ip4: 172.16.2.183/28
+
+
+  - name: Configuration des routes vers LAN1 et LAN 3
+    community.general.nmcli:
+      type: ethernet
+      conn_name: eth1 via ansible
+      ifname: eth1
+      routes4: 
+        - 172.16.2.128/28  172.16.2.162 # LAN1
+        - 172.16.2.144/28  172.16.2.162 # LAN3
+      state: present
+
+  - name: Activation du routage IPv4
+    sysctl:
+      name: net.ipv4.ip_forward
+      value: '1'
+      sysctl_set: yes
+
+  - name: Activation explicite de la configuration eth1
+    shell: nmcli con up "eth1 via ansible"
+
+  - name: Activation explicite de la configuration eth2
+    shell: nmcli con up "eth2 via ansible"
