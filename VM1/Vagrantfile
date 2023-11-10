@@ -10,7 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 ##### Vos Configurations
 
   # Ajout d'une interface réseau (privée)
-  config.vm.network "private_network", ip:"0.0.0.0", auto_config: false, virtualbox__intnet: "LAN1"
+#  config.vm.network "private_network", ip:"0.0.0.0", auto_config: false, virtualbox__intnet: "LAN1"
   config.vm.network "private_network", ip:"0.0.0.0", auto_config: false, virtualbox__intnet: "LAN3" 
   
   # provision ansible

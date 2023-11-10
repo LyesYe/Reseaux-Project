@@ -18,8 +18,7 @@
       conn_name: eth1 via ansible
       ifname: eth1
       state: present
-      autoconnect: true
-      method6: auto
+      ip6: fc00:1234:2::36
 
   - name: Configuration de VM3-6/eth2 (LAN4)
     nmcli:
@@ -30,29 +29,13 @@
       autoconnect: true
       ip4: 172.16.2.186/28
 
-  - name: Configuration des routes vers LAN1, LAN2 et LAN3
+  - name: Configuration de la route vers LAN1-6 via VM2-6
     community.general.nmcli:
       type: ethernet
-      conn_name: eth2 via ansible
-      ifname: eth2
-      routes4:
-        - 172.16.2.128/28 172.16.2.183 # LAN1
-        - 172.16.2.160/28 172.16.2.183 # LAN2
-        - 172.16.2.144/28 172.16.2.183 # LAN3
+      conn_name: eth1 via ansible
+      ifname: eth1
+      routes6: fc00:1234:1::/64 fc00:1234:2::26
       state: present
-
-
-  # - name: Installer inetd
-  #   package:
-  #     name: inetutils-inetd
-  #     state: present
-
-  # - shell: update-inetd --add "echo stream tcp6 nowait nobody internal"
-
-  # - name: Démarrer le service inetd
-  #   service:
-  #     name: inetutils-inetd
-  #     state: started
 
   - name: Suppression de la passerelle par défaut
     shell: ip route del default

@@ -1,3 +1,4 @@
+# Configuration eth1+eth2+radvd / Ansible playbook
 # RAPPEL: eth0 est à vagrant, ne pas y toucher
 
 - hosts: localhost
@@ -42,25 +43,6 @@
       name: net.ipv6.conf.all.forwarding
       value: '1'
       sysctl_set: yes
-
-# Service radvd
-  - name: fichier de configuration radvd.conf
-    copy:
-      src: /vagrant/radvd.conf
-      dest: /etc/radvd.conf
-      owner: root
-      group: root
-      mode: '0644'
-
-  - name: Installer radvd
-    package:
-      name: radvd
-      state: present
-
-  - name: Démarrer le service radvd
-    service:
-      name: radvd
-      state: started
 
 # suppression route par défaut (de vagrant)
   - name: Suppression de la passerelle par défaut
